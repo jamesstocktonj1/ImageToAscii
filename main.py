@@ -20,7 +20,7 @@ charValues = [[-1, 1, -1, 1],
               [1, 0, 1, 0],
               [0, 0.5, 0, 0.5]]
 
-spaceThreshold = 1750
+spaceThreshold = 150
 
 def loadFromFile(file_name):
 
@@ -116,8 +116,14 @@ def generateCorrelationSquare(xSize, ySize, uxm, uxc, uym, uyc):
         grid.append(buf)
 
 
-    print("Grid Sum: {}".format(gridSum))
+    for y in range(0, ySize):
 
+        for x in range(0, xSize):
+
+            grid[y][x] = grid[y][x] / gridSum
+
+
+    print("Grid Sum: {}".format(gridSum))
 
     return grid
 
