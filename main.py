@@ -40,12 +40,7 @@ def loadFromFile(file_name):
     for y in range(0, img.size[1]):      
 
         image_grid.append(buf[(y * img.size[0]) : ((y + 1) * img.size[0])])
-        #image_grid.append(temp)
-    
 
-    #while([] in image_grid):
-    #
-    #     image_grid.remove([])
 
     print("X: {}, Y: {}".format(len(image_grid[0]), len(image_grid)))
     print("X: {}, Y: {}".format(img.size[0], img.size[1]))
@@ -99,7 +94,11 @@ def generateCorrelationSquare(xSize, ySize, uxm, uxc, uym, uyc):
     #ux = (xSize - 1) * 0.5
     #uy = (ySize - 1) * 0.5
 
+    #grid to return
     grid = []
+
+    #used in grid normalisation
+    gridSum = 0
 
     for y in range(0, ySize):
 
@@ -113,11 +112,12 @@ def generateCorrelationSquare(xSize, ySize, uxm, uxc, uym, uyc):
 
             buf.append(n)
 
-        #print(buf)
+        gridSum += sum(buf)
         grid.append(buf)
 
-    #plt.imshow(grid)
-    #plt.show()
+
+    print("Grid Sum: {}".format(gridSum))
+
 
     return grid
 
@@ -161,15 +161,20 @@ f = open("image.txt", "w")
 
 bigString = ""
 
+symbolSquares = []
+
+for i in range(0, len(charValues)):
+    symbolSquares.append(generateCorrelationSquare(8, 10, charValues[i][0], charValues[i][1], charValues[i][2], charValues[i][3]))
+
+
+#itterate through grid
 for n in range(0, len(subGrid)):
 
     corValues = []
 
     for i in range(0, len(charValues)):
 
-        cor = generateCorrelationSquare(8, 10, charValues[i][0], charValues[i][1], charValues[i][2], charValues[i][3])
-
-        corValues.append(correlationFunction(subGrid[n], cor))
+        corValues.append(correlationFunction(subGrid[n], symbolSquares[i]))
 
     if(max(corValues) > spaceThreshold):
         bestChar = corValues.index(max(corValues))
