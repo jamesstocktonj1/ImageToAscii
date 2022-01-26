@@ -21,6 +21,7 @@ charValues = [[-1, 1, -1, 1],
               [0, 0.5, 0, 0.5]]
 
 spaceThreshold = 150
+intensityThreshold = 100
 
 def loadFromFile(file_name):
 
@@ -128,6 +129,24 @@ def generateCorrelationSquare(xSize, ySize, uxm, uxc, uym, uyc):
     return grid
 
 
+
+
+def squareIntensity(imageSquare):
+
+    xSize = len(imageSquare[0])
+    ySize = len(imageSquare)
+
+    intensityValue = 0
+
+    for y in range(0, ySize):
+
+        intensityValue += sum(imageSquare[i])
+
+    return intensityValue
+
+
+
+
 def correlationFunction(correlationSquare, imageSquare):
 
     xSize = len(imageSquare[0])
@@ -173,33 +192,58 @@ for i in range(0, len(charValues)):
     symbolSquares.append(generateCorrelationSquare(8, 10, charValues[i][0], charValues[i][1], charValues[i][2], charValues[i][3]))
 
 
+intensitySquare = []
+temp = []
+
 #itterate through grid
 for n in range(0, len(subGrid)):
 
     corValues = []
+    curChar = ""
 
+    #itterate through symbols and calculate correlation
     for i in range(0, len(charValues)):
 
         corValues.append(correlationFunction(subGrid[n], symbolSquares[i]))
 
-    if(max(corValues) > spaceThreshold):
-        bestChar = corValues.index(max(corValues))
-        f.write(charSymbol[bestChar])
-        bigString += charSymbol[bestChar]
-    else:
-        f.write(" ")
-        bigString += " "
+
+    #select best character (highest correlation)
+    bestChar = corValues.index(max(corValues))
+    curChar = charSymbol[bestChar]
+
+    #calculate square intensity
+    sqIntensity = squareIntensity(subGrid[n])
+    
+
+    #add blank if less than space threshold
+    if(max(corValues) < spaceThreshold):
+        curChar = " "
+        print(sqIntensity)
+
+    #if larger than certain value
+    if(sqIntensity > intensityThreshold):
+        curChar = "@"
 
 
+    #append to array and file
+    f.write(curChar)
+    bigString += curChar
+
+
+    #add \n if end of row
     if(((n + 1) % int(len(grid[0]) / 8)) == 0):
         f.write("\n")
         bigString += "\n"
+
 
 f.close()
 
 print("Length: {}, {}".format(len(subGrid), len(bigString)))
 
-plt.imshow(subGrid[50])
-plt.show()
+#intensitySquare[50]
+print("Intensity Max: {}, Min: {}".format(max(temp), min(temp)))
+
+#plt.imshow(intensitySquare)
+#plt.show()
 
 #createSubSquares(grid, 25)
