@@ -11,17 +11,27 @@ import math
 Image.MAX_IMAGE_PIXELS = None
 
 
-imageFile = "bojo.jpg"
+imageFile = "profilePic.jpg"
 
 
 #character correlation constants
 charSymbol = ["/", "\\", "#"]
-charValues = [[-1, 1, -1, 1],
-              [1, 0, 1, 0],
+charValues = [[-1, 1, -0.8, 1],
+              [1, 0, 0.8, 0],
               [0, 0.5, 0, 0.5]]
 
+#   (uxm, uxc, uym, uyc)
+# / (-1, 1 -1, 1)
+# \ (1, 0, 1, 0)
+# # (0, 0.5, 0, 0.5)
+
+#8 / 10 squares
 spaceThreshold = 150
-intensityThreshold = 100
+intensityThreshold = 15000
+
+#40 / 50 squares
+#spaceThreshold = 50
+#intensityThreshold = 10000000
 
 def loadFromFile(file_name):
 
@@ -178,6 +188,7 @@ grid = loadFromFile(imageFile)
 #plt.show()
 
 subGrid = createSubSquares(grid, 10)
+#subGrid = createSubSquares(grid, 50)
 
 
 pixelSize = [8, 10]
@@ -190,7 +201,7 @@ symbolSquares = []
 
 for i in range(0, len(charValues)):
     symbolSquares.append(generateCorrelationSquare(8, 10, charValues[i][0], charValues[i][1], charValues[i][2], charValues[i][3]))
-
+    #symbolSquares.append(generateCorrelationSquare(40, 50, charValues[i][0], charValues[i][1], charValues[i][2], charValues[i][3]))
 
 intensitySquare = []
 temp = []
@@ -218,7 +229,7 @@ for n in range(0, len(subGrid)):
     #add blank if less than space threshold
     if(max(corValues) < spaceThreshold):
         curChar = " "
-        print(sqIntensity)
+        #print(sqIntensity)
 
     #if larger than certain value
     if(sqIntensity > intensityThreshold):
@@ -230,7 +241,7 @@ for n in range(0, len(subGrid)):
     bigString += curChar
 
 
-    #add \n if end of row
+    #add \n if end of row /8
     if(((n + 1) % int(len(grid[0]) / 8)) == 0):
         f.write("\n")
         bigString += "\n"
@@ -241,9 +252,19 @@ f.close()
 print("Length: {}, {}".format(len(subGrid), len(bigString)))
 
 #intensitySquare[50]
-print("Intensity Max: {}, Min: {}".format(max(temp), min(temp)))
+#print("Intensity Max: {}, Min: {}".format(max(temp), min(temp)))
 
-#plt.imshow(intensitySquare)
-#plt.show()
+plt.imshow(grid)
+plt.show()
+
+'''
+fig1 = plt.subplot(1, 3, 1)
+fig2 = plt.subplot(1, 3, 2)
+fig3 = plt.subplot(1, 3, 3)
+
+fig1.imshow(symbolSquares[0])
+fig2.imshow(symbolSquares[1])
+fig3.imshow(symbolSquares[2])
+plt.show()'''
 
 #createSubSquares(grid, 25)
